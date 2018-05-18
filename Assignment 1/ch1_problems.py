@@ -1,4 +1,4 @@
-from collections import *
+from collections import defaultdict
 
 
 #
@@ -58,10 +58,13 @@ def chk_permutation(string1, string2):
         s_count[c] += 1
     print(s_count)
 
+    # subtract letter count for second
+    # letter occurrences
     for c in string2:
         s_count[c] -= 1
     print(s_count)
 
+    # if values are equiv to zero
     if not s_count.values():
         print("is permutation")
         return True
@@ -85,7 +88,7 @@ def chk_permutation(string1, string2):
 # E/A : Similar to previous examples we scan string then manipulate each space to hold percent.
 #       having done this, we then make sure we don't replace trailing spaces and instead remove it
 #       with percents and just omit them from our end goal
-# L   : Since strings are immutable in python we convert it to a list and analyze string in reverse.
+# L   : Since strings are immutable in python we convert it to a list and analyze string in reverse
 #       since we have an extra buffer at the end it allows us to change chars without overwriting.
 
 def urlify(in_string, length):
@@ -111,28 +114,98 @@ def urlify(in_string, length):
 # I   : Asking for a permutation of a palindrome..
 # D   : Return true or false
 # E/A : So, palindromes are sets of words that can be mirrored from start to mid and mid to end.
-#       This characteristic allows us to check that if a word contains less than 3 letters it is not a
+#       This characteristic allows us to confirm if a word contains less than 3 letters it is not a
 #       palindrome. Since now, it can also be a permutation of any set of letters my strategy is to
-#       analyze the letters and count each occurrence. Occurrences for letters should all equal 2 and at
-#       most 1 occurrence of another letter that will be the middle letter if odd, else fails.
-# L   :
+#       analyze the letters and count each occurrence. Occurrences for letters should equal 2 except for the
+#       exception of odd length numbers where there can be 1 occurrence of a letter in the middle.
+# L   : After having came up with an initial solution of simple incrementing each occurrence of a letter
+#       it made it much more difficult to track if an odd length string that has 3+ occurring letters,
+#       therefor i changed my implementation to reflect adding and subtracting whenever an occurrence
+#       is found, then was able to build cases from either if the string was odd/even length then based
+#       on whether the occurrences of the chars in the string met certain criteria would determine this soln
 
-def palindrome_perm(string):
-    if len(string) < 3:
-        return "not palindrome"
+def palindrome_perm(str):
+    # remove white-space and assign to dictionary
+    string = str.replace(" ", "")
+    letter_occurrence_dict = defaultdict(int)
+
+    # count occurrences for each letter in str
+    for i in string:
+
+        # if letter exists in string with value
+        # greater than zero subtract from total
+        if letter_occurrence_dict[i] > 0:
+            letter_occurrence_dict[i] -= 1
+
+        # if letter is at zero (for letter occurrences
+        # greater the 2) or first time occurrence
+        # increment count of occurrence by 1
+        else:
+            letter_occurrence_dict[i] += 1
+
+    print(letter_occurrence_dict)
+
+    # check if string length is even
+    if len(string) % 2 is 0:
+
+        # if length of string is even the dictionary
+        # should be filled with values of 0 ( +1 and -1)
+        if not letter_occurrence_dict.values():   # doesn't check if values are equal to 2
+            print("is even Palindrome / Permutation")
+            return True
+        else:
+            print("not even palindrome")
+            return False
+
+    # if length of string is odd
     else:
-        for i in str:
-            str[i] += 1
+        # single letter occurrences reflect the number
+        # of times a character has only 1 occurrence in str
+        single_letters = 0
 
+        # scan to see if there is only one single occurrence
+        # of a letter we assume will be the mid of palindrome
+        while single_letters < 2:
+            if letter_occurrence_dict.values():
+                single_letters += 1
+            print(single_letters)
+            print("is odd palindrome / permutation")
+            return True
 
+        # if there are more than two occurences of a single letter
+        # we know it is not an odd length palindrome
+        print("not palindrome / permutation")
+        return False
+
+# 1.5 One Away
+# There are three types of edits that can be performen on a string: insert a character, remove a character,
+# or replace a character. Given two strings, write a function to check if ther are one edit or zero edits away.
+#
+# pale, ple -> true
+# pales, pale -> true
+# pale, bale -> true
+# pale, bake -> false
+#
+# I   : Asking if first string is one edit away from second string via an addition of a character or removal
+# D   : return true if they are similar enough to be edit away, else false
+# E/A : Given a string, I plan to set it to a list and similarly compare it to the second string and marking
+#       each time a difference is found. these differences will require analyzing both the strings to determine
+#       if it was an insert or removal, an insert would simply adjust the characters after the insertion point +1
+#       and a removal to next char after removal -1 position. So if an unexpected character is found when comparing
+#       lists we analyze next char in str2 to determine if a new letter was inserted (expected letter will be at next
+#       position, or if this is not the case we analyze the second char in first string to determine if a letter was
+#       removed.
+# L   :
+def one_away():
+    print("will start soon")
 
 
 def main():
     print("Testing:\n\n")
-    # is_unique("dayzz")  # 1.1
-    # chk_permutation("strasd", "string")  # 1.2
-    # print(urlify("Mr John Smith ", 13))
-
+    # is_unique("dayzz")    # 1.1
+    # chk_permutation("strasd", "string")   # 1.2
+    # print(urlify("Mr John Smith ", 13))   # 1.3
+    palindrome_perm("tacio a too")    # 1.4 even case doesnt work as intended
 
 if __name__ == "__main__":
     main()
