@@ -177,6 +177,7 @@ def palindrome_perm(str):
         print("not palindrome / permutation")
         return False
 
+
 # 1.5 One Away
 # There are three types of edits that can be performen on a string: insert a character, remove a character,
 # or replace a character. Given two strings, write a function to check if ther are one edit or zero edits away.
@@ -190,22 +191,68 @@ def palindrome_perm(str):
 # D   : return true if they are similar enough to be edit away, else false
 # E/A : Given a string, I plan to set it to a list and similarly compare it to the second string and marking
 #       each time a difference is found. these differences will require analyzing both the strings to determine
-#       if it was an insert or removal, an insert would simply adjust the characters after the insertion point +1
-#       and a removal to next char after removal -1 position. So if an unexpected character is found when comparing
-#       lists we analyze next char in str2 to determine if a new letter was inserted (expected letter will be at next
-#       position, or if this is not the case we analyze the second char in first string to determine if a letter was
-#       removed.
-# L   :
-def one_away():
-    print("will start soon")
+#       if it was an insert, removal, or replace. The insert would shift the expected chars on string2 after the
+#       occurrence with insertion +1. Removal of char would reflect the missing char and next expected char at -1
+#       Replace would mean all chars are in same position except for where the replacement was made. So if an unexpected
+#       char is found in str2 when comparing, we first analyze next char in str2 to see if it matches the next
+#       position of char in string1 (insertion), if this is not the case we check . determine if a new letter was
+#       inserted (expected letter will be at next position, or if this is not the case we analyze the second char in
+#       first string to determine if a letter was removed.
+# L   : Learning two lists can be scanned at the same time using zip(a,b) saved some lines in implementation and being
+#       able to manage the pointers was the main part of this question.
+
+def one_away(string1, string2):
+
+    if len(string2) < len(string1)-1:
+        print("too few chars to be one away")
+        return False
+    elif len(string2) > len(string1) + 1:
+        print("too many chars to be one away")
+        return False
+
+    string1 = list(string1)
+    string2 = list(string2)
+    o_count = 0
+    # analyze string comparisons while there is at
+    # most one inconsistency in strings
+    while o_count < 2:
+
+        # scan strings in parallel
+        for k, j in zip(string1, string2):
+
+            # inconsistency is found
+            if string1[k] != string2[j]:
+                o_count += 1
+
+                # insertion test
+                if string1[k] == string2[j+1]:
+                    print("insertion found")
+                    j = j+1
+
+                # removal test
+                elif string1[k+1] == string2[j]:
+                    print("removal found")
+                    k = k+1
+
+                # replacement test
+                elif string1[k+1] == string2[j+1]:
+                    print("replacement found")
+                    k = k+1
+                    j = j+1
+
+        print("At most one away found in strings")
 
 
 def main():
-    print("Testing:\n\n")
+
+    print("Testing:\n-----------\n")
+
     # is_unique("dayzz")    # 1.1
     # chk_permutation("strasd", "string")   # 1.2
     # print(urlify("Mr John Smith ", 13))   # 1.3
-    palindrome_perm("tacio a too")    # 1.4 even case doesnt work as intended
+    # palindrome_perm("tacio a too")    # 1.4 even case doesnt work as intended
+    # one_away("abcde", "abcde")      # 1.5 doesn't run but idea is there
+
 
 if __name__ == "__main__":
     main()
