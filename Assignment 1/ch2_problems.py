@@ -104,7 +104,8 @@ def remove_dup(link_list):
 # D   : We locate from (end-n) node
 # E\A : We have two pointers that move together but one has a head start by k hops, when leading pointer reaches end
 #       of list the second pointer will be located on kth node.
-# L   :
+# L   : By implementing head start we only need one scan through the linked list to determine the kth poisition from end
+#        this enables our complexity to be O(n) where n is the size of the linked list
 
 
 def kth_from_last(k, link_list):
@@ -135,7 +136,8 @@ def kth_from_last(k, link_list):
 # E\A : set two pointers, one whose job is to reach the end of the list and the other to reach the middle of the list
 #       the mid pointer will move every 2nd hop the end pointer does, so when end is reached the mid node will be in
 #       the correct position to delete
-# L   :
+# L   : our method will keep track of the midpoint at all times given it's move every other hop of end tracker. Our
+#       complexity will be O(n) where n is the size of the linked list
 
 def del_med(link_list):
     end = mid = link_list.head
@@ -170,7 +172,8 @@ def del_med(link_list):
 # D   : an arranged list of numbers where x is the midpoint of list and as mentioned above
 # E\A : move down list and analyze if value is less than or greater than x, then begin sort as you
 #       move towards end of list
-# L   :
+# L   : implementation scans through entire list to rearrange order, implementation is of 0(n) where
+#       n is the size of the link list
 
 def partition(self, val):
     prev = None
@@ -201,11 +204,12 @@ def partition(self, val):
 # Input: (6 -) 1 -) 7) + (2 -) 9 -) 5).That is,617 + 295.
 # Output: 9 -) 1 -) 2. That is, 912.
 #
-# I   : use numbers stored in a linked list to create two seperate numbers (stored backwards) to add sep by +.
+# I   : use numbers stored in a linked list to create two separate numbers (stored backwards) to add sep by +.
 # D   : a new number returned that represents the addition of two numbers
-# E\A : push numbers in stack until an operator is read, then append whats popped from stack into new number and
+# E\A : push numbers in stack until an operator is read, then begin popping stack and extend values to new number and
 #       begin same process with second number except when end of link list is reached we add these two numbers
-# L   :
+# L   : scanning through the list one time allows us to work in O(n) time complexity but space complexity is used
+#       more with a stack, so O(n)+ n therefor, n.
 
 def sum_lists(self):
     current = self.head
@@ -213,10 +217,17 @@ def sum_lists(self):
     value = 0
 
     while current:
+
+        # if operator is read begin popping
         if current.date == '+':
             while not stack:
-                value.extend(stack.pop())
+                num.extend(stack.pop())
+            value += num
+
+        # store values to stack
         else:
             push(current.data)
             current = current.next
+
+    return value
 
