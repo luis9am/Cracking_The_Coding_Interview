@@ -66,8 +66,8 @@ def stack_min(stack):
 # FOLLOW UP
 # Implement a function popAt (int index) which performs a pop operation on a specific sub-stack.
 #
-# I   :
-# D   :
+# I   : implement a size limit on size of stack where if it is exceeded a new stack is then created
+# D   : multiple stacks when push count exceeds limit
 # E\A :
 # L   :
 
