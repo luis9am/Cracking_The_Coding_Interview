@@ -50,10 +50,18 @@ def three_in_one(array):
 # E\A : in stack. at each push we analyze the current min value. So at new stack we initiate min to be current contents
 #       of stack, then when a second item is pushed we compare the prev min and value stored in push item. The new item
 #       will then hold the min of the stack at it's current state and so fourth
-# L   :
+# L   : push operation tracks in real time the min and is able to access at any time by peeking stack
 
-def stack_min(stack):
-    print("..")
+def push(self, item, curr_min):
+    if self.IsFull():
+        raise Exception('Stack full')
+
+    if self.IsEmpty():
+        curr_min = item
+
+    else:
+        if item < curr_min:
+            curr_min = item
 
 
 # 3.3 Stack of Plates:
@@ -68,23 +76,55 @@ def stack_min(stack):
 #
 # I   : implement a size limit on size of stack where if it is exceeded a new stack is then created
 # D   : multiple stacks when push count exceeds limit
-# E\A :
-# L   :
+# E\A : design push so that if limit is met a new stack is used to store push contents, pop will begin
+#       from the most recently created stack and when it is emptied it will then pop stack created
+#       previous to that.
+# L   : implementation follows scheme where if stack max is reached we start moving to second stack
 
-def set_of_stacks(stack):
-    print("..")
+def push(self, item):
+    if len(self.stacks) and (len(self.stacks[-1]) < self.capacity):
+        self.stacks[-1].append(item)
+    else:
+        self.stacks.append([item])
+
+def pop(self):
+    while len(self.stacks) and (len(self.stacks[-1]) == 0):
+        self.stacks.pop()
+    if len(self.stacks) == 0:
+        return None
+    item = self.stacks[-1].pop()
+    if len(self.stacks[-1]) == 0:
+        self.stacks.pop()
+
+    return item
 
 
 # 3.4 Queue via Stacks:
 # Implement a MyQueue class which implements a queue using two stacks.
 #
-# I   :
-# D   :
-# E\A :
-# L   :
+# I   : implement queue using stack
+# D   : stack that maintains the order similar to queue
+# E\A : have two stacks that shuffle values inside, first stack stores initial values until it
+#       it needs to be popped, these values are then popped and moved to second stack, the order
+#       it is now being filed under is proper queue where first in is at the head. New pushed items
+#       are still put onto 1st stack and unless a pop removes all items ins 2nd is performed in the two stacks there
+#       wont be any more shuffling
+# L   : to pop item in queue stack takes the same amount of steps as it dude to push it in place but after a pop has
+#       been made to a sizeable stack we can freely pop from stack in constant time
 
-def queue_via_stack(stack):
-    print("..")
+class QueueViaStacks():
+    def __init__(self):
+        self.in_stack = Stack()
+        self.out_stack = Stack()
+
+    def add(self, item):
+        self.in_stack.push(item)
+
+    def remove(self):
+        if len(self.out_stack) == 0:
+            while len(self.in_stack):
+                self.out_stack.push(self.in_stack.pop())
+        return self.out_stack.pop()
 
 
 # 3.S Sort Stack:
@@ -92,10 +132,36 @@ def queue_via_stack(stack):
 # an additional temporary stack, but you may not copy the elements into any other data structure
 # (such as an array). The stack supports the following operations: push, pop, peek, and isEmpty.
 #
-# I   :
-# D   :
-# E\A :
-# L   :
+# I   : sort stack using another stack
+# D   : a stack that is sorted by its contents
+# E\A : Pop an element from input stack call it temp while temporary stack is not empty and top of temporary stack is
+#       greater than temp, pop from temporary stack and push it to the input stack push temp in temporary stack
+# L   : More shuffling and monitoring where the sorted numbers a re held inside temp stack
 
 def sort_stack(stack):
-    print("..")
+    temp = Stack()
+    previous = current = stack.pop()
+
+    # scan stacks for smaller values
+    while current:
+        if current < previous:
+            temp.push(current)
+        else:
+            temp.push(previous)
+        previous = current
+        current = stack.pop()
+    is_sorted = True
+    current = temp.pop()
+
+    while current:
+        if current > previous:
+            is_sorted = False
+            stack.push(current)
+        else:
+            stack.push(previous)
+        previous = current
+        current = temp.pop()
+        stack.push(previous)
+        if is_sorted:
+            return stack
+        return sort_stack(stack)
